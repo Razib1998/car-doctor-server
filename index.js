@@ -33,7 +33,7 @@ async function run() {
 
 
     const serviceCollection = client.db("carDoctor").collection("Services");
-    // const bookingsCollection = client.db("carDoctor").collection("bookings");
+    const bookingsCollection = client.db("carDoctor").collection("bookings");
 
      app.get("/services", async(req, res)=>{
         const cursor = serviceCollection.find();
@@ -55,13 +55,26 @@ async function run() {
      });
 
 
-    //  For booking a order
+    // For booking the  order
 
-    // app.post('bookings', async(req, res)=>{
-    //   const booking = req.body;
-    //   const result = await bookingsCollection.insertOne(booking);
-    //   res.send();
-    // });
+    app.post("/bookings", async(req, res)=>{
+      const booking = req.body;
+      console.log(booking);
+      const result = await bookingsCollection.insertOne(booking);
+      res.send(result);
+    });
+
+    // To get some data
+
+    app.get("/bookings", async(req, res)=>{
+      console.log(req.query);
+      let query = {};
+      if(req.query?.email){
+        query = { email: req.query.email}
+      }
+      const result = await bookingsCollection.find(query).toArray();
+      res.send(result)
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
